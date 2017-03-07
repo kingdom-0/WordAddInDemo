@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="Ribbon_Load">
+  <ribbon>
+    <tabs>
+      <tab idMso="TabAddIns"
+           label="RibbonTab">
+        <group id="AddControlGroup" 
+               label="添加WinForm控件">
+          <dropDown id="WinformControls"
+                    label="Winform控件"
+                    onAction="OnSelectedWinformControlChanged">
+            <item id="TestButton" 
+                  label="Button"/>
+            <item id="TestLabel" 
+                  label="Label"/>
+            <item id="TestDatePicker" 
+                  label="DatePicker"/>
+            <item id="TestCheckBox" 
+                  label="CheckBox"/>
+            <item id="TestGroupBox" 
+                  label="GroupBox"/>
+          </dropDown>
+        </group>
+        <group id="SettingGroup"
+               label="设置">
+          <box id="GroupContainer" 
+               boxStyle="horizontal">
+            <toggleButton id="AddInController"
+                          label="开启插件" 
+                          onAction="OnToggleButtonClick"
+                          getImage="GetImage"/>
+            <toggleButton id="TaskPaneController"
+                          label="显示TaskPane"
+                          getImage="GetImage"
+                          onAction="OnToggleButtonClick"/>
+          </box>
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>
+
