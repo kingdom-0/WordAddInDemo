@@ -2,23 +2,22 @@
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using Microsoft.Office.Interop.Word;
+using WordAddInDemoV2.Bookmark;
+using WordAddInDemoV2.ConstantDatas;
+using WordAddInDemoV2.DataContainers;
+using WordAddInDemoV2.Helpers;
 using Office = Microsoft.Office.Core;
 
-namespace WordAddInDemoV2
+namespace WordAddInDemoV2.Ribbons
 {
     [ComVisible(true)]
     public class RibbonTab : Office.IRibbonExtensibility
     {
         private Office.IRibbonUI _ribbon;
-        private static int _ControlIndex;
-
-        public RibbonTab()
-        {
-            
-        }
+        private bool _addInEnabled;
+        private static int _controlIndex;
 
         #region IRibbonExtensibility Members
 
@@ -34,6 +33,19 @@ namespace WordAddInDemoV2
         public void Ribbon_Load(Office.IRibbonUI ui)
         {
             _ribbon = ui;
+        }
+
+        public void HandleSaveAsCommand(Office.IRibbonControl control, ref bool cancelDefault)
+        {
+            MessageBox.Show(control.ToString());
+            //Globals.ThisAddIn.Application.CommandBars[]
+        }
+
+        public void HandleInertBookmarkCommand(Office.IRibbonControl control, ref bool cancelDefault)
+        {
+            if (!_addInEnabled) return;
+            cancelDefault = false;
+            DisplayBookmarksForm();
         }
 
         public void OnSelectedWinformControlChanged(Office.IRibbonControl control, 
@@ -91,12 +103,29 @@ namespace WordAddInDemoV2
             }
         }
 
+        public bool GetControlEnabled(Office.IRibbonControl control)
+        {
+            return _addInEnabled;
+        }
+
+        private void DisplayBookmarksForm()
+        {
+            var form = new BookmarksForm
+            {
+                StartPosition = FormStartPosition.CenterScreen
+            };
+
+            form.ShowDialog();
+        }
+
         private void SetAddInUsability(bool enable)
         {
-            var bars = Globals.ThisAddIn.Application.CommandBars;
-            var dictionaries = Globals.ThisAddIn.Application.CustomDictionaries;
-            var item = Globals.ThisAddIn.Application.CustomDictionaries[0];
-            //TODO.
+            _addInEnabled = enable;
+            if (!_addInEnabled)
+            {
+                SetTaskPaneVisibility(false);
+            }
+            _ribbon.Invalidate();
         }
 
         private static void SetTaskPaneVisibility(bool visible)
@@ -115,13 +144,19 @@ namespace WordAddInDemoV2
             var resourceNames = asm.GetManifestResourceNames();
             for (var i = 0; i < resourceNames.Length; ++i)
             {
-                if (string.Compare(resourceName, resourceNames[i], StringComparison.OrdinalIgnoreCase) != 0)
+                if (string.Compare(resourceName, resourceNames[i],
+                    StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     continue;
                 }
 
                 // ReSharper disable once AssignNullToNotNullAttribute
-                using (var resourceReader = new StreamReader(asm.GetManifestResourceStream(resourceNames[i])))
+                var stream = asm.GetManifestResourceStream(resourceNames[i]);
+                if (stream == null)
+                {
+                    continue;
+                }
+                using (var resourceReader = new StreamReader(stream))
                 {
                     return resourceReader.ReadToEnd();
                 }
@@ -144,15 +179,18 @@ namespace WordAddInDemoV2
         private static void AddControl(WinformControlType controlType, float width, float height)
         {
             var range = GetCurrentSelectionRange();
+            var controlId = GuidGenerator.NewGuid();
             var document = Globals.Factory.GetVstoObject(Globals.ThisAddIn.Application.ActiveDocument);
             document.Controls.AddControl(GetControl(controlType), range, width, 
-                height, GuidGenerator.NewGuid());
+                height, controlId);
+            var controlItem = new ControlItem(controlId, controlType, range, width, height);
+            ControlsContainer.Instance.ControlItems.Add(controlItem);
         }
 
         private static Control GetControl(WinformControlType controlType)
         {
             Control control;
-            var index = _ControlIndex++;
+            var index = _controlIndex++;
             switch (controlType)
             {
                 case WinformControlType.Button:

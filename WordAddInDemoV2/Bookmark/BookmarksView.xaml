@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="WordAddInDemoV2.Bookmark.BookmarksView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Width" Value="80" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Margin" Value="5" />
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="2,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0"
+                   Text="书签名(B)"
+                   Margin="0,5" />
+        <Grid Grid.Row="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ComboBox Grid.Column="0"
+                          IsEditable="True"
+                          IsDropDownOpen="True"
+                          Height="30" FontSize="14"
+                          StaysOpenOnEdit="True"
+                          MaxDropDownHeight="200"
+                          VerticalAlignment="Top"
+                          VerticalContentAlignment="Center" 
+                          ItemsSource="{Binding}" />
+                <StackPanel Grid.Column="1">
+                    <Button Content="添加(A)" Margin="5,0" Click="OnAddBookmarkButtonClick"/>
+                    <Button Content="定位(G)" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal">
+            <TextBlock Text="排序依据：" />
+            <StackPanel>
+                <RadioButton GroupName="SortStyle" Content="名称(N)" />
+                <RadioButton GroupName="SortStyle" Content="位置(L)" Margin="0,10,0,0"/>
+            </StackPanel>
+        </StackPanel>
+        <CheckBox Grid.Row="3" Content="隐藏书签(H)" />
+        <Button Content="取消" Grid.Row="4" HorizontalAlignment="Right" />
+    </Grid>
+</UserControl>
+

@@ -1,4 +1,4 @@
-﻿namespace WordAddInDemoV2
+﻿namespace WordAddInDemoV2.ConstantDatas
 {
     internal class ConstantNameData
     {

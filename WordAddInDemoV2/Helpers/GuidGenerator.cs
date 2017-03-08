@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WordAddInDemoV2
+namespace WordAddInDemoV2.Helpers
 {
     internal class GuidGenerator
     {

@@ -1,21 +1,16 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using WordAddInDemoV2.DataContainers;
 
 namespace WordAddInDemoV2.TaskPane
 {
     /// <summary>
     /// Interaction logic for DocumentStructureView.xaml
     /// </summary>
-    public partial class DocumentStructureView : UserControl
+    public partial class DocumentStructureView
     {
         public DocumentStructureView()
         {
             InitializeComponent();
-        }
-
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Button is clicked!");
+            DataContext = ControlsContainer.Instance.ControlItems;
         }
     }
 }

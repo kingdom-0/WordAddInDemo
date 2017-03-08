@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="Ribbon_Load">
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" 
+          onLoad="Ribbon_Load">
+  <commands>
+    <command idMso="FileSaveAs" onAction="HandleSaveAsCommand"/>
+    <!--<command idMso="BookmarkInsert" onAction="HandleInertBookmarkCommand"/>-->
+    <command idMso="BookmarkInsert" onAction="HandleInertBookmarkCommand"/>
+  </commands>
   <ribbon>
     <tabs>
       <tab idMso="TabAddIns"
@@ -8,7 +14,8 @@
                label="添加WinForm控件">
           <dropDown id="WinformControls"
                     label="Winform控件"
-                    onAction="OnSelectedWinformControlChanged">
+                    onAction="OnSelectedWinformControlChanged" 
+                    getEnabled="GetControlEnabled">
             <item id="TestButton" 
                   label="Button"/>
             <item id="TestLabel" 
@@ -32,7 +39,8 @@
             <toggleButton id="TaskPaneController"
                           label="显示TaskPane"
                           getImage="GetImage"
-                          onAction="OnToggleButtonClick"/>
+                          onAction="OnToggleButtonClick" 
+                          getEnabled="GetControlEnabled"/>
           </box>
         </group>
       </tab>
