@@ -3,8 +3,6 @@
           onLoad="Ribbon_Load">
   <commands>
     <!--<command idMso="FileSaveAs" onAction="HandleSaveAsCommand"/>-->
-    <command idMso="FileSaveAs" enabled="false"/>
-    <command idMso="FileSave" enabled="false"/>
     <command idMso="BookmarkInsert" onAction="HandleInertBookmarkCommand"/>
   </commands>
   <ribbon>

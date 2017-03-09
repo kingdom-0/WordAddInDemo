@@ -2,16 +2,23 @@
 {
     internal class ConstantNameData
     {
-        public const string AddInController = "AddInController";
-        public const string TaskPaneController = "TaskPaneController";
+        //Ribbon related
+        internal const string AddInController = "AddInController";
+        internal const string TaskPaneController = "TaskPaneController";
 
-        public const string TestButton = "TestButton";
-        public const string TestLabel = "TestLabel";
-        public const string TestDatePicker = "TestDatePicker";
-        public const string TestCheckBox = "TestCheckBox";
-        public const string TestGroupBox = "TestGroupBox";
+        //WinForm controls' name
+        internal const string TestButton = "TestButton";
+        internal const string TestLabel = "TestLabel";
+        internal const string TestDatePicker = "TestDatePicker";
+        internal const string TestCheckBox = "TestCheckBox";
+        internal const string TestGroupBox = "TestGroupBox";
 
-        public const string RBtnSortByName = "RBtnSortByName";
-        public const string RBtnSortByLocation = "RBtnSortByLocation";
+        //WPF constrols' name
+        internal const string RBtnSortByName = "RBtnSortByName";
+        internal const string RBtnSortByLocation = "RBtnSortByLocation";
+
+        //Mso images
+        internal const string DarkShading = "DarkShading";
+        internal const string Bullets = "Bullets";
     }
 }

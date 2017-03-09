@@ -2,8 +2,8 @@
 {
     internal class ConstantControlSize
     {
-        public const int Large = 100;
-        public const int Middle = 80;
-        public const int Small = 30;
+        internal const int Large = 100;
+        internal const int Middle = 80;
+        internal const int Small = 30;
     }
 }

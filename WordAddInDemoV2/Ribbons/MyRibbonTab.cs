@@ -35,8 +35,7 @@ namespace WordAddInDemoV2.Ribbons
 
         public void HandleSaveAsCommand(Office.IRibbonControl control, ref bool cancelDefault)
         {
-            MessageBox.Show(control.ToString());
-            //Globals.ThisAddIn.Application.CommandBars[]
+            //TODO: Why this command is not executed???
         }
 
         public void HandleInertBookmarkCommand(Office.IRibbonControl control, ref bool cancelDefault)
