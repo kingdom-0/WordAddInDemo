@@ -1,5 +1,5 @@
-﻿using Microsoft.Office.Core;
-using WordAddInDemoV2.Bookmark;
+﻿using System;
+using Microsoft.Office.Core;
 using WordAddInDemoV2.Ribbons;
 using WordAddInDemoV2.TaskPane;
 using Word = Microsoft.Office.Interop.Word;
@@ -8,23 +8,49 @@ namespace WordAddInDemoV2
 {
     public partial class ThisAddIn
     {
-        private RibbonTab _ribbonTab;
+        private bool _needDisplayRecentFile;
+
         internal Microsoft.Office.Tools.CustomTaskPane CurrentTaskPane { get; private set; }
 
         protected override IRibbonExtensibility CreateRibbonExtensibilityObject()
         {
-            return new RibbonTab();
+            return new MyRibbonTab();
         }
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
             AddTaskPane();
-            HandleWordEvents(true);
+            //HandleWordEvents(true);
+            InitializeDisplayRectFilesProperty();
+            //Application.CommandBars["File"].Controls.Add(typeof(CommandBarButton), "MyId",);
+            var controls = Application.CommandBars["File"].Controls;
+
+            //foreach (CommandBarControl commandBarControl in controls)
+            //{
+            //    Console.WriteLine(commandBarControl.Caption);
+            //}
+            var menuItem = controls.Add(MsoControlType.msoControlButton, Temporary: true);
+            menuItem.Caption = "自定义项";
+            menuItem.Width = 100;
+            menuItem.Height = 40;
+            menuItem.Visible = true;
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
-            HandleWordEvents(false);
+            //HandleWordEvents(false);
+            SetDisplayRecentFilesProperty(_needDisplayRecentFile);
+        }
+
+        private void InitializeDisplayRectFilesProperty()
+        {
+            _needDisplayRecentFile = Globals.ThisAddIn.Application.DisplayRecentFiles;
+            SetDisplayRecentFilesProperty(false);
+        }
+
+        private static void SetDisplayRecentFilesProperty(bool needDisplay)
+        {
+            Globals.ThisAddIn.Application.DisplayRecentFiles = needDisplay;
         }
 
         private void AddTaskPane()
@@ -57,17 +83,17 @@ namespace WordAddInDemoV2
 
         private void OnDocumentBeforeClose(Word.Document doc, ref bool cancel)
         {
-            int i = 0;
+            //TODO.
         }
 
         private void OnDocumentChange()
         {
-            int i = 0;
+            //TODO.
         }
 
         private void OnDocumentOpen(Word.Document doc)
         {
-            
+            //TODO.
         }
 
         #region VSTO generated code

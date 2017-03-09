@@ -2,14 +2,15 @@
 <customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" 
           onLoad="Ribbon_Load">
   <commands>
-    <command idMso="FileSaveAs" onAction="HandleSaveAsCommand"/>
-    <!--<command idMso="BookmarkInsert" onAction="HandleInertBookmarkCommand"/>-->
+    <!--<command idMso="FileSaveAs" onAction="HandleSaveAsCommand"/>-->
+    <command idMso="FileSaveAs" enabled="false"/>
+    <command idMso="FileSave" enabled="false"/>
     <command idMso="BookmarkInsert" onAction="HandleInertBookmarkCommand"/>
   </commands>
   <ribbon>
     <tabs>
       <tab idMso="TabAddIns"
-           label="RibbonTab">
+           label="MyRibbonTab">
         <group id="AddControlGroup" 
                label="添加WinForm控件">
           <dropDown id="WinformControls"
@@ -44,6 +45,7 @@
           </box>
         </group>
       </tab>
+      <tab idMso="TabSave" visible="false" > </tab>
     </tabs>
   </ribbon>
 </customUI>

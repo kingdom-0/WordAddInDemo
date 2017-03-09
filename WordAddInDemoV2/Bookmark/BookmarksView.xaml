@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dataContainers="clr-namespace:WordAddInDemoV2.DataContainers"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -29,18 +30,30 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <ComboBox Grid.Column="0"
-                          IsEditable="True"
-                          IsDropDownOpen="True"
-                          Height="30" FontSize="14"
-                          StaysOpenOnEdit="True"
-                          MaxDropDownHeight="200"
-                          VerticalAlignment="Top"
-                          VerticalContentAlignment="Center" 
-                          ItemsSource="{Binding}" />
+                <StackPanel Grid.Column="0">
+                    <TextBox x:Name="TxtBlkBookmark" 
+                             VerticalContentAlignment="Center" 
+                             FontSize="14" 
+                             Height="30"
+                             TextChanged="OnBookmarkTextChanged" />
+                    <ListBox x:Name="BookmarkList" 
+                             ItemsSource="{Binding}"
+                             ScrollViewer.VerticalScrollBarVisibility="Visible"  
+                             Height="150" 
+                             SelectionChanged="OnBookmarkSelectionChanged">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type dataContainers:BookmarkItem}">
+                                <TextBlock Text="{Binding Name}"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
                 <StackPanel Grid.Column="1">
-                    <Button Content="添加(A)" Margin="5,0" Click="OnAddBookmarkButtonClick"/>
-                    <Button Content="定位(G)" />
+                    <Button x:Name="AddBookmark" IsEnabled="False" 
+                            Content="添加(A)" Margin="5,0"
+                            Click="OnAddButtonClick" />
+                    <Button x:Name="NavigateToBookmark" IsEnabled="False" 
+                            Content="定位(G)" Click="OnNavigateButtonClick" />
                 </StackPanel>
             </Grid>
         </Grid>
@@ -48,12 +61,23 @@
                     Orientation="Horizontal">
             <TextBlock Text="排序依据：" />
             <StackPanel>
-                <RadioButton GroupName="SortStyle" Content="名称(N)" />
-                <RadioButton GroupName="SortStyle" Content="位置(L)" Margin="0,10,0,0"/>
+                <RadioButton GroupName="SortStyle" 
+                             x:Name="RBtnSortByName" 
+                             Content="名称(N)" 
+                             Checked="OnOrderTypeChecked" />
+                <RadioButton GroupName="SortStyle" 
+                             x:Name="RBtnSortByLocation" 
+                             Content="位置(L)" 
+                             Margin="0,10,0,0"
+                             IsChecked="True"
+                             Checked="OnOrderTypeChecked"/>
             </StackPanel>
         </StackPanel>
-        <CheckBox Grid.Row="3" Content="隐藏书签(H)" />
-        <Button Content="取消" Grid.Row="4" HorizontalAlignment="Right" />
+        <CheckBox Grid.Row="3" Content="隐藏书签(H)" Click="OnHideBookmarkControlClick"/>
+        <Button Content="取消" Grid.Row="4" 
+                HorizontalAlignment="Right" Click="OnCancalButtonClick" />
     </Grid>
 </UserControl>
+
+
 

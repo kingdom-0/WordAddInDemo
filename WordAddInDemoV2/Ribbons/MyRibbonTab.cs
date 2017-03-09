@@ -3,8 +3,6 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Microsoft.Office.Interop.Word;
-using WordAddInDemoV2.Bookmark;
 using WordAddInDemoV2.ConstantDatas;
 using WordAddInDemoV2.DataContainers;
 using WordAddInDemoV2.Helpers;
@@ -13,7 +11,7 @@ using Office = Microsoft.Office.Core;
 namespace WordAddInDemoV2.Ribbons
 {
     [ComVisible(true)]
-    public class RibbonTab : Office.IRibbonExtensibility
+    public class MyRibbonTab : Office.IRibbonExtensibility
     {
         private Office.IRibbonUI _ribbon;
         private bool _addInEnabled;
@@ -23,7 +21,7 @@ namespace WordAddInDemoV2.Ribbons
 
         public string GetCustomUI(string ribbonId)
         {
-            return GetResourceText("WordAddInDemoV2.RibbonTab.xml");
+            return GetResourceText("WordAddInDemoV2.Ribbons.MyRibbonTab.xml");
         }
 
         #endregion
@@ -43,9 +41,14 @@ namespace WordAddInDemoV2.Ribbons
 
         public void HandleInertBookmarkCommand(Office.IRibbonControl control, ref bool cancelDefault)
         {
-            if (!_addInEnabled) return;
-            cancelDefault = false;
-            DisplayBookmarksForm();
+            if (!_addInEnabled)
+            {
+                cancelDefault = false;
+                return;
+            }
+
+            BookmarksConatiner.Instance.Reset();
+            FormHelper.Instance.Show();
         }
 
         public void OnSelectedWinformControlChanged(Office.IRibbonControl control, 
@@ -74,7 +77,7 @@ namespace WordAddInDemoV2.Ribbons
                     break;
             }
 
-            MoveCursorToEnd();
+            ApplicationHelper.MoveCursorToEnd();
         }
 
         public string GetImage(Office.IRibbonControl control)
@@ -106,16 +109,6 @@ namespace WordAddInDemoV2.Ribbons
         public bool GetControlEnabled(Office.IRibbonControl control)
         {
             return _addInEnabled;
-        }
-
-        private void DisplayBookmarksForm()
-        {
-            var form = new BookmarksForm
-            {
-                StartPosition = FormStartPosition.CenterScreen
-            };
-
-            form.ShowDialog();
         }
 
         private void SetAddInUsability(bool enable)
@@ -164,21 +157,9 @@ namespace WordAddInDemoV2.Ribbons
             return null;
         }
 
-        private static Range GetCurrentSelectionRange()
-        {
-            var start = Globals.ThisAddIn.Application.Selection.Start;
-            var end = Globals.ThisAddIn.Application.Selection.End;
-            return Globals.ThisAddIn.Application.ActiveDocument.Range(start, end);
-        }
-
-        private static void MoveCursorToEnd()
-        {
-            Globals.ThisAddIn.Application.Selection.EndKey(WdUnits.wdStory);
-        }
-
         private static void AddControl(WinformControlType controlType, float width, float height)
         {
-            var range = GetCurrentSelectionRange();
+            var range = ApplicationHelper.GetCurrentSelectionRange();
             var controlId = GuidGenerator.NewGuid();
             var document = Globals.Factory.GetVstoObject(Globals.ThisAddIn.Application.ActiveDocument);
             document.Controls.AddControl(GetControl(controlType), range, width, 
@@ -197,7 +178,7 @@ namespace WordAddInDemoV2.Ribbons
                     control = new Button {Text = $@"Button{index}"};
                     break;
                 case WinformControlType.CheckBox:
-                    control = new System.Windows.Forms.CheckBox {Text = $@"CheckBox{index}"};
+                    control = new CheckBox {Text = $@"CheckBox{index}"};
                     break;
                 case WinformControlType.DateTimePicker:
                     control = new DateTimePicker();

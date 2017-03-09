@@ -10,5 +10,8 @@
         public const string TestDatePicker = "TestDatePicker";
         public const string TestCheckBox = "TestCheckBox";
         public const string TestGroupBox = "TestGroupBox";
+
+        public const string RBtnSortByName = "RBtnSortByName";
+        public const string RBtnSortByLocation = "RBtnSortByLocation";
     }
 }
