@@ -2,13 +2,12 @@
 <customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" 
           onLoad="Ribbon_Load">
   <commands>
-    <!--<command idMso="FileSaveAs" onAction="HandleSaveAsCommand"/>-->
     <command idMso="BookmarkInsert" onAction="HandleInertBookmarkCommand"/>
   </commands>
   <ribbon>
     <tabs>
       <tab idMso="TabAddIns"
-           label="MyRibbonTab">
+           label="自定义选项卡">
         <group id="AddControlGroup" 
                label="添加WinForm控件">
           <dropDown id="WinformControls"
@@ -42,9 +41,14 @@
                           getEnabled="GetControlEnabled"/>
           </box>
         </group>
-      </tab>
-      <tab idMso="TabSave" visible="false" > </tab>
+      </tab>      
     </tabs>
+    
   </ribbon>
+  <backstage>
+    <button id="SaveAsButton" label="自定义另存为" 
+            onAction="OnButtonClick" 
+            getEnabled="GetControlEnabled"/>
+  </backstage>
 </customUI>
 

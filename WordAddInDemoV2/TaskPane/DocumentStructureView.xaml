@@ -9,8 +9,11 @@
     <UserControl.Resources>
         <Style x:Key="ListViewItemStyle"
                TargetType="{x:Type ListViewItem}">
-            <Setter Property="Height" Value="30" />
+            <Setter Property="Height" Value="35" />
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="TextBlock.Foreground" Value="Black"/>
             <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="LightGray"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListViewItem}">
@@ -26,7 +29,6 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="true">
                                 <Setter TargetName="Bd" Property="BorderThickness" Value="1" />
-                                <Setter Property="Foreground" Value="CornflowerBlue" />
                                 <Setter TargetName="Bd" Property="BorderBrush"
                                         Value="CornflowerBlue" />
                             </Trigger>
@@ -35,7 +37,6 @@
                                         Value="2" />
                                 <Setter TargetName="Bd" Property="BorderBrush"
                                         Value="CornflowerBlue" />
-                                <Setter Property="Foreground" Value="CornflowerBlue" />
                             </Trigger>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
@@ -43,7 +44,7 @@
                                     <Condition Property="Selector.IsSelectionActive" Value="false" />
                                 </MultiTrigger.Conditions>
                                 <Setter TargetName="Bd" Property="BorderThickness" Value="1" />
-                                <Setter Property="Foreground" Value="CornflowerBlue" />
+                                <Setter Property="Foreground" Value="#313D52" />
                             </MultiTrigger>
                             <Trigger Property="IsEnabled" Value="false">
                                 <Setter Property="Foreground"
@@ -54,37 +55,48 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                        <Border BorderThickness="0" Background="Transparent">
+                            <TextBlock x:Name="ContentHeader" 
+                                       Text="{TemplateBinding Content}" 
+                                       Padding="5,5,5,0" Width="{TemplateBinding Width}" 
+                                       TextAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="Margin" Value="0,2"/>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <ListView ItemsSource="{Binding}"
+                  Background="White"
                   ItemContainerStyle="{StaticResource ListViewItemStyle}">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Width="60" Header="名称">
+                    <GridViewColumn Width="110" Header="类型名称">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type dataContainers:ControlItem}">
-                                <TextBlock Text="{Binding Name}" />
+                                <TextBlock Text="{Binding TypeName}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="100" Header="控件类型">
+                    <GridViewColumn Width="110" Header="元素类型">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type dataContainers:ControlItem}">
-                                <TextBlock Text="{Binding ControlType}" />
+                                <TextBlock Text="{Binding ElementType}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="50" Header="宽度">
+                    <GridViewColumn Width="80" Header="描述">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type dataContainers:ControlItem}">
-                                <TextBlock Text="{Binding Width}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Width="50" Header="高度">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type dataContainers:ControlItem}">
-                                <TextBlock Text="{Binding Height}" />
+                                <TextBlock Text="{Binding Description}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.Office.Core;
+using WordAddInDemoV2.ConstantDatas;
+using WordAddInDemoV2.DataContainers;
 using WordAddInDemoV2.Helpers;
 using WordAddInDemoV2.Ribbons;
 using WordAddInDemoV2.TaskPane;
@@ -18,28 +20,16 @@ namespace WordAddInDemoV2
             return new MyRibbonTab();
         }
 
-        private void ThisAddIn_Startup(object sender, System.EventArgs e)
+        private void ThisAddIn_Startup(object sender, EventArgs e)
         {
             AddTaskPane();
-            HandleWordEvents(true);
+            HandleApplicationEvents(true);
             InitializeDisplayRectFilesProperty();
-            //Application.CommandBars["File"].Controls.Add(typeof(CommandBarButton), "MyId",);
-            //var controls = Application.CommandBars["File"].Controls;
-
-            //foreach (CommandBarControl commandBarControl in controls)
-            //{
-            //    Console.WriteLine(commandBarControl.Caption);
-            //}
-            //var menuItem = controls.Add(MsoControlType.msoControlButton, Temporary: true);
-            //menuItem.Caption = "自定义项";
-            //menuItem.Width = 100;
-            //menuItem.Height = 40;
-            //menuItem.Visible = true;
         }
 
-        private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
+        private void ThisAddIn_Shutdown(object sender, EventArgs e)
         {
-            HandleWordEvents(false);
+            HandleApplicationEvents(false);
             SetDisplayRecentFilesProperty(_needDisplayRecentFile);
         }
 
@@ -61,55 +51,75 @@ namespace WordAddInDemoV2
                 return;
             }
 
-            CurrentTaskPane = Globals.ThisAddIn.CustomTaskPanes.Add(new TaskPaneView(), "文档元素结构");
+            CurrentTaskPane = Globals.ThisAddIn.CustomTaskPanes.Add(new TaskPaneView(), 
+                ConstantControlNames.TaskPaneTitle);
             CurrentTaskPane.DockPosition = MsoCTPDockPosition.msoCTPDockPositionRight;
             CurrentTaskPane.Width = 300;
         }
 
-        private void HandleWordEvents(bool register)
+        private void HandleApplicationEvents(bool register)
         {
             if (register)
             {
-                Application.DocumentOpen += OnDocumentOpen;
-                Application.DocumentChange += OnDocumentChange;
-                Application.DocumentBeforeClose += OnDocumentBeforeClose;
+                Application.WindowSelectionChange += OnWindowSelectionChange;
                 Application.DocumentBeforeSave += OnDocumentBeforeSave;
+                Application.DocumentChange += OnDocumentChange;
             }
             else
             {
-                Application.DocumentOpen -= OnDocumentOpen;
-                Application.DocumentChange -= OnDocumentChange;
-                Application.DocumentBeforeClose -= OnDocumentBeforeClose;
                 Application.DocumentBeforeSave -= OnDocumentBeforeSave;
+                Application.WindowSelectionChange -= OnWindowSelectionChange;
             }
-        }
-
-        private void OnDocumentBeforeSave(Word.Document doc, ref bool saveAsUi, ref bool cancel)
-        {
-            cancel = true;
-            var dialog = doc.Application.FileDialog[MsoFileDialogType.msoFileDialogSaveAs];
-            dialog.InitialFileName = GuidGenerator.NewGuid();
-            var result = dialog.Show();
-            if (result == -1)
-            {
-                //TODO.
-                Globals.ThisAddIn.Application.Documents.Open("filepath");
-            }
-        }
-
-        private void OnDocumentBeforeClose(Word.Document doc, ref bool cancel)
-        {
-            //TODO.
         }
 
         private void OnDocumentChange()
         {
-            //TODO.
+            AddCustomXmlPartToActiveDocument(Globals.ThisAddIn.Application.ActiveDocument);
         }
 
-        private void OnDocumentOpen(Word.Document doc)
+        private void OnWindowSelectionChange(Word.Selection sel)
         {
-            //TODO.
+            
+            ControlsContainer.Instance.Reset();
+        }
+
+        // ReSharper disable once RedundantAssignment
+        private static void OnDocumentBeforeSave(Word.Document doc, ref bool saveAsUi, ref bool cancel)
+        {
+            saveAsUi = false;
+            var dialog = doc.Application.FileDialog[MsoFileDialogType.msoFileDialogSaveAs];
+            dialog.InitialFileName = GuidGenerator.NewGuid();
+            dialog.Title = ConstantControlNames.DialogTitle;
+            var result = dialog.Show();
+            if (result == -1)
+            {
+                var selectedPath = default(string);
+                foreach (var fileDialogSelectedItem in dialog.SelectedItems)
+                {
+                    selectedPath = fileDialogSelectedItem.ToString();
+                }
+                Globals.ThisAddIn.Application.ActiveDocument.SaveAs(
+                    $"{selectedPath}.{ConstantControlNames.CustomDocumentExtension}");
+            }
+            else
+            {
+                cancel = true;
+            }
+        }
+
+        private void AddCustomXmlPartToActiveDocument(Word.Document document)
+        {
+            string xmlString =
+                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+                "<employees xmlns=\"http://schemas.microsoft.com/vsto/samples\">" +
+                    "<employee>" +
+                        "<name>Karina Leal</name>" +
+                        "<hireDate>1999-04-01</hireDate>" +
+                        "<title>Manager</title>" +
+                    "</employee>" +
+                "</employees>";
+
+            document.CustomXMLParts.Add(xmlString, missing);
         }
 
         #region VSTO generated code

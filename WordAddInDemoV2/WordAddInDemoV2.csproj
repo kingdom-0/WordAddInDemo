@@ -168,10 +168,11 @@
       <DependentUpon>BookmarksView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ConstantDatas\ConstantControlSize.cs" />
-    <Compile Include="ConstantDatas\ConstantNameData.cs" />
+    <Compile Include="ConstantDatas\ConstantControlNames.cs" />
     <Compile Include="DataContainers\BookmarksConatiner.cs" />
     <Compile Include="DataContainers\ControlsContainer.cs" />
     <Compile Include="Helpers\ApplicationHelper.cs" />
+    <Compile Include="Helpers\ControlGenerator.cs" />
     <Compile Include="Helpers\FormHelper.cs" />
     <Compile Include="Helpers\GuidGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -224,7 +225,9 @@
     <None Include="WordAddInDemoV2_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Ribbons\MyRibbonTab.xml" />
+    <EmbeddedResource Include="Ribbons\MyRibbonTab.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Bookmark\BookmarksView.xaml">

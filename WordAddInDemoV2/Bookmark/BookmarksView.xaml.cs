@@ -57,10 +57,10 @@ namespace WordAddInDemoV2.Bookmark
 
             switch (radioButton.Name)
             {
-                case ConstantNameData.RBtnSortByName:
+                case ConstantControlNames.RBtnSortByName:
                     BookmarksConatiner.Instance.OrderBookmark(BookmarkOrderType.Name);
                     break;
-                case ConstantNameData.RBtnSortByLocation:
+                case ConstantControlNames.RBtnSortByLocation:
                     BookmarksConatiner.Instance.OrderBookmark(BookmarkOrderType.Position);
                     break;
             }

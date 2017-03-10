@@ -9,8 +9,17 @@
         Label
     }
 
-    public enum ElementType
+    public enum ControlType
     {
         
+    }
+
+    public enum ElementType
+    {
+        Comment,
+        Control,
+        Table,
+        ContentControl,
+        Bookmark
     }
 }

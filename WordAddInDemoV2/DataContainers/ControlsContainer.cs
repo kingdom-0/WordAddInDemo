@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Forms;
 using Microsoft.Office.Interop.Word;
 using WordAddInDemoV2.Ribbons;
 
@@ -15,35 +16,66 @@ namespace WordAddInDemoV2.DataContainers
 
         public static ControlsContainer Instance => _instance ?? (_instance = new ControlsContainer());
 
-        public ObservableCollection<ControlItem> ControlItems { get; private set; }
+        public ObservableCollection<ControlItem> ControlItems { get; }
 
-        public void Add(ControlItem controlItem)
+        public void Reset()
         {
+            ControlItems.Clear();
+            var document = Globals.Factory.GetVstoObject(Globals.ThisAddIn.Application.ActiveDocument);
             
+            foreach (Control control in document.Controls)
+            {
+                ControlItems.Add(ControlItem.GetNewInstance(ElementType.Control,
+                    control.GetType().Name, control.Text));
+            }
+
+            foreach (Comment comment in document.Comments)
+            {
+                ControlItems.Add(ControlItem.GetNewInstance(ElementType.Comment, comment.GetType().Name,
+                    comment.Author));
+            }
+
+            foreach (Table table in document.Tables)
+            {
+                ControlItems.Add(ControlItem.GetNewInstance(ElementType.Table,
+                    table.GetType().Name, table.Title));
+            }
+
+            foreach (ContentControl contentControl in document.ContentControls)
+            {
+                ControlItems.Add(ControlItem.GetNewInstance(ElementType.ContentControl,
+                    contentControl.GetType().Name, contentControl.Title));
+            }
+            foreach (var bookmark in document.Bookmarks)
+            {
+                ControlItems.Add(ControlItem.GetNewInstance(ElementType.Bookmark, 
+                    bookmark.GetType().Name, bookmark.ToString()));
+            }
+            
+            //var item = document.CustomXMLParts
+            //AddControl(ElementType.Control);
         }
     }
 
     public class ControlItem
     {
-        public ControlItem(string name, WinformControlType controlType, Range range,
-            double width, double height)
+        private ControlItem(ElementType elementType, string typeName, string description)
         {
-            Name = name;
-            ControlType = controlType;
-            Range = range;
-            Width = width;
-            Height = height;
+            ElementType = elementType;
+            TypeName = typeName;
+            Description = description;
         }
 
-        public string Name { get; private set; }
+        public static ControlItem GetNewInstance(ElementType elementType, string typeName, 
+            string description)
+        {
+            return new ControlItem(elementType, typeName, description);
+        }
 
-        public WinformControlType ControlType { get; private set; }
+        public string Description { get; private set; }
 
-        public Range Range { get; private set; }
+        public ElementType ElementType { get; private set; }
 
-        public double Width { get; private set; }
-
-        public double Height { get; private set; }
-
+        public string TypeName { get; private set; }
     }
 }

@@ -20,7 +20,7 @@ namespace WordAddInDemoV2.DataContainers
             Bookmarks = new ObservableCollection<BookmarkItem>();
         }
 
-        public ObservableCollection<BookmarkItem> Bookmarks { get; private set; }
+        public ObservableCollection<BookmarkItem> Bookmarks { get; }
 
         public static BookmarksConatiner Instance => _instance ?? (_instance = new BookmarksConatiner());
 
@@ -36,6 +36,7 @@ namespace WordAddInDemoV2.DataContainers
             {
                 bookmarkList.Add(bookmark);
             }
+
             foreach (var bookmark in bookmarkList.OrderBy(x => x.Start))
             {
                 Bookmarks.Add(new BookmarkItem(bookmark.Name, bookmark.Start));

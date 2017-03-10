@@ -15,7 +15,6 @@ namespace WordAddInDemoV2.Ribbons
     {
         private Office.IRibbonUI _ribbon;
         private bool _addInEnabled;
-        private static int _controlIndex;
 
         #region IRibbonExtensibility Members
 
@@ -31,11 +30,6 @@ namespace WordAddInDemoV2.Ribbons
         public void Ribbon_Load(Office.IRibbonUI ui)
         {
             _ribbon = ui;
-        }
-
-        public void HandleSaveAsCommand(Office.IRibbonControl control, ref bool cancelDefault)
-        {
-            //TODO: Why this command is not executed???
         }
 
         public void HandleInertBookmarkCommand(Office.IRibbonControl control, ref bool cancelDefault)
@@ -59,19 +53,19 @@ namespace WordAddInDemoV2.Ribbons
 
             switch (selectedItemId)
             {
-                case ConstantNameData.TestButton:
+                case ConstantControlNames.TestButton:
                     AddControl(WinformControlType.Button, large, middle);
                     break;
-                case ConstantNameData.TestCheckBox:
+                case ConstantControlNames.TestCheckBox:
                     AddControl(WinformControlType.CheckBox, middle, small);
                     break;
-                case ConstantNameData.TestDatePicker:
+                case ConstantControlNames.TestDatePicker:
                     AddControl(WinformControlType.DateTimePicker, large, small);
                     break;
-                case ConstantNameData.TestGroupBox:
+                case ConstantControlNames.TestGroupBox:
                     AddControl(WinformControlType.GroupBox, large, large);
                     break;
-                case ConstantNameData.TestLabel:
+                case ConstantControlNames.TestLabel:
                     AddControl(WinformControlType.Label, middle, small);
                     break;
             }
@@ -83,10 +77,10 @@ namespace WordAddInDemoV2.Ribbons
         {
             switch (control.Id)
             {
-                case ConstantNameData.AddInController:
-                    return "DarkShading";
-                case ConstantNameData.TaskPaneController:
-                    return "Bullets";
+                case ConstantControlNames.AddInController:
+                    return ConstantControlNames.DarkShading;
+                case ConstantControlNames.TaskPaneController:
+                    return ConstantControlNames.Bullets;
             }
 
             return string.Empty;
@@ -96,11 +90,21 @@ namespace WordAddInDemoV2.Ribbons
         {
             switch (control.Id)
             {
-                case ConstantNameData.AddInController:
+                case ConstantControlNames.AddInController:
                     SetAddInUsability(isPressed);
                     break;
-                case ConstantNameData.TaskPaneController:
+                case ConstantControlNames.TaskPaneController:
                     SetTaskPaneVisibility(isPressed);
+                    break;
+            }
+        }
+
+        public void OnButtonClick(Office.IRibbonControl control)
+        {
+            switch (control.Id)
+            {
+                case ConstantControlNames.SaveAsButton:
+                    Globals.ThisAddIn.Application.ActiveDocument.SaveAs();
                     break;
             }
         }
@@ -156,37 +160,37 @@ namespace WordAddInDemoV2.Ribbons
             return null;
         }
 
-        private static void AddControl(WinformControlType controlType, float width, float height)
+        private static void AddControl(WinformControlType controlType, int width, int height)
         {
             var range = ApplicationHelper.GetCurrentSelectionRange();
             var controlId = GuidGenerator.NewGuid();
             var document = Globals.Factory.GetVstoObject(Globals.ThisAddIn.Application.ActiveDocument);
-            document.Controls.AddControl(GetControl(controlType), range, width, 
-                height, controlId);
-            var controlItem = new ControlItem(controlId, controlType, range, width, height);
-            ControlsContainer.Instance.ControlItems.Add(controlItem);
+            var control = GetControl(controlType, width, height);
+            document.Controls.AddControl(control, range, control.Width, 
+                control.Height, controlId);
+            //var controlItem = new ControlItem(controlId, controlType, range, width, height);
+            //ControlsContainer.Instance.ControlItems.Add(controlItem);
         }
 
-        private static Control GetControl(WinformControlType controlType)
+        private static Control GetControl(WinformControlType controlType, int width, int height)
         {
             Control control;
-            var index = _controlIndex++;
             switch (controlType)
             {
                 case WinformControlType.Button:
-                    control = new Button {Text = $@"Button{index}"};
+                    control = ButtonGenerator.Instance.Generate(width, height);
                     break;
                 case WinformControlType.CheckBox:
-                    control = new CheckBox {Text = $@"CheckBox{index}"};
+                    control = CheckBoxGenerator.Instance.Generate(width, height);
                     break;
                 case WinformControlType.DateTimePicker:
-                    control = new DateTimePicker();
+                    control = DateTimePickerGenerator.Instance.Generate(width, height);
                     break;
                 case WinformControlType.GroupBox:
-                    control = new GroupBox {Text = $@"GroupBox{index}"};
+                    control = GroupBoxGenerator.Instance.Generate(width, height);
                     break;
                 case WinformControlType.Label:
-                    control = new Label {Text = $@"Label{index}"};
+                    control = LabelGenerator.Instance.Generate(width, height);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(controlType), controlType, null);
