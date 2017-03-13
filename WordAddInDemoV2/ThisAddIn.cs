@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Windows.Forms;
 using Microsoft.Office.Core;
 using WordAddInDemoV2.ConstantDatas;
 using WordAddInDemoV2.DataContainers;
@@ -11,6 +13,8 @@ namespace WordAddInDemoV2
 {
     public partial class ThisAddIn
     {
+        private const int TaskPaneWidth = 400;
+        private const int ConfirmedDialogCode = -1;
         private bool _needDisplayRecentFile;
 
         internal Microsoft.Office.Tools.CustomTaskPane CurrentTaskPane { get; private set; }
@@ -51,10 +55,10 @@ namespace WordAddInDemoV2
                 return;
             }
 
-            CurrentTaskPane = Globals.ThisAddIn.CustomTaskPanes.Add(new TaskPaneView(), 
+            CurrentTaskPane = Globals.ThisAddIn.CustomTaskPanes.Add(new TaskPaneView(),
                 ConstantControlNames.TaskPaneTitle);
             CurrentTaskPane.DockPosition = MsoCTPDockPosition.msoCTPDockPositionRight;
-            CurrentTaskPane.Width = 300;
+            CurrentTaskPane.Width = TaskPaneWidth;
         }
 
         private void HandleApplicationEvents(bool register)
@@ -69,17 +73,18 @@ namespace WordAddInDemoV2
             {
                 Application.DocumentBeforeSave -= OnDocumentBeforeSave;
                 Application.WindowSelectionChange -= OnWindowSelectionChange;
+                Application.DocumentChange -= OnDocumentChange;
             }
         }
 
         private void OnDocumentChange()
         {
-            AddCustomXmlPartToActiveDocument(Globals.ThisAddIn.Application.ActiveDocument);
+            //AddCustomXmlPartToActiveDocument(Globals.ThisAddIn.Application.ActiveDocument);
         }
 
         private void OnWindowSelectionChange(Word.Selection sel)
         {
-            
+
             ControlsContainer.Instance.Reset();
         }
 
@@ -91,15 +96,11 @@ namespace WordAddInDemoV2
             dialog.InitialFileName = GuidGenerator.NewGuid();
             dialog.Title = ConstantControlNames.DialogTitle;
             var result = dialog.Show();
-            if (result == -1)
+            if (result == ConfirmedDialogCode)
             {
-                var selectedPath = default(string);
-                foreach (var fileDialogSelectedItem in dialog.SelectedItems)
-                {
-                    selectedPath = fileDialogSelectedItem.ToString();
-                }
-                Globals.ThisAddIn.Application.ActiveDocument.SaveAs(
-                    $"{selectedPath}.{ConstantControlNames.CustomDocumentExtension}");
+                var selectedPath = dialog.SelectedItems.Item(1);
+                SaveDocumentWithCustomExtension(doc, selectedPath);
+                SaveDocumentXmlContent(doc, selectedPath);
             }
             else
             {
@@ -107,20 +108,33 @@ namespace WordAddInDemoV2
             }
         }
 
-        private void AddCustomXmlPartToActiveDocument(Word.Document document)
+        private static void SaveDocumentWithCustomExtension(Word.Document doc, string selectedPath)
         {
-            string xmlString =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
-                "<employees xmlns=\"http://schemas.microsoft.com/vsto/samples\">" +
-                    "<employee>" +
-                        "<name>Karina Leal</name>" +
-                        "<hireDate>1999-04-01</hireDate>" +
-                        "<title>Manager</title>" +
-                    "</employee>" +
-                "</employees>";
-
-            document.CustomXMLParts.Add(xmlString, missing);
+            doc.SaveAs($"{selectedPath}.{ConstantControlNames.CustomDocumentExtension}");
         }
+
+        private static void SaveDocumentXmlContent(Word._Document doc, string selectedPath)
+        {
+            try
+            {
+                StreamWriter writer;
+                using (writer = File.CreateText($@"{selectedPath}.xml"))
+                {
+                    writer.Write(doc.WordOpenXML);
+                }
+            }
+            catch (Exception ex)
+            {
+                // ReSharper disable once LocalizableElement
+                MessageBox.Show($"Save document to xml failed, {ex.Message}.");
+            }
+        }
+
+        //private void AddCustomXmlPartToActiveDocument(Word.Document document)
+        //{
+        //    //TODO: add logic.
+        //    //document.CustomXMLParts.Add(xmlString, missing);
+        //}
 
         #region VSTO generated code
 

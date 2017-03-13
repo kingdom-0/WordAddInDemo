@@ -2,7 +2,6 @@
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using WordAddInDemoV2.ConstantDatas;
 using WordAddInDemoV2.DataContainers;
 using WordAddInDemoV2.Helpers;
@@ -44,7 +43,7 @@ namespace WordAddInDemoV2.Ribbons
             FormHelper.Instance.Show();
         }
 
-        public void OnSelectedWinformControlChanged(Office.IRibbonControl control, 
+        public void OnSelectedWinformControlChanged(Office.IRibbonControl control,
             string selectedItemId, int selectdedItemIndex)
         {
             const int large = ConstantControlSize.Large;
@@ -104,7 +103,7 @@ namespace WordAddInDemoV2.Ribbons
             switch (control.Id)
             {
                 case ConstantControlNames.SaveAsButton:
-                    Globals.ThisAddIn.Application.ActiveDocument.SaveAs();
+                    SaveDocument();
                     break;
             }
         }
@@ -114,6 +113,18 @@ namespace WordAddInDemoV2.Ribbons
             return _addInEnabled;
         }
 
+        private static void SaveDocument()
+        {
+            try
+            {
+                Globals.ThisAddIn.Application.ActiveDocument.SaveAs();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Save document failed, {ex.Message}.");
+            }
+        }
+
         private void SetAddInUsability(bool enable)
         {
             _addInEnabled = enable;
@@ -121,13 +132,13 @@ namespace WordAddInDemoV2.Ribbons
             {
                 SetTaskPaneVisibility(false);
             }
+
             _ribbon.Invalidate();
         }
 
         private static void SetTaskPaneVisibility(bool visible)
         {
-            var customTaskPane = Globals.ThisAddIn.CurrentTaskPane;
-            customTaskPane.Visible = visible;
+            Globals.ThisAddIn.CurrentTaskPane.Visible = visible;
         }
 
         #endregion
@@ -165,38 +176,9 @@ namespace WordAddInDemoV2.Ribbons
             var range = ApplicationHelper.GetCurrentSelectionRange();
             var controlId = GuidGenerator.NewGuid();
             var document = Globals.Factory.GetVstoObject(Globals.ThisAddIn.Application.ActiveDocument);
-            var control = GetControl(controlType, width, height);
+            var control = ControlGenerator.Instance.Generate(controlType, width, height);
             document.Controls.AddControl(control, range, control.Width, 
                 control.Height, controlId);
-            //var controlItem = new ControlItem(controlId, controlType, range, width, height);
-            //ControlsContainer.Instance.ControlItems.Add(controlItem);
-        }
-
-        private static Control GetControl(WinformControlType controlType, int width, int height)
-        {
-            Control control;
-            switch (controlType)
-            {
-                case WinformControlType.Button:
-                    control = ButtonGenerator.Instance.Generate(width, height);
-                    break;
-                case WinformControlType.CheckBox:
-                    control = CheckBoxGenerator.Instance.Generate(width, height);
-                    break;
-                case WinformControlType.DateTimePicker:
-                    control = DateTimePickerGenerator.Instance.Generate(width, height);
-                    break;
-                case WinformControlType.GroupBox:
-                    control = GroupBoxGenerator.Instance.Generate(width, height);
-                    break;
-                case WinformControlType.Label:
-                    control = LabelGenerator.Instance.Generate(width, height);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(controlType), controlType, null);
-            }
-
-            return control;
         }
 
         #endregion

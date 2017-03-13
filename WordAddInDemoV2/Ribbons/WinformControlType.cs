@@ -8,18 +8,4 @@
         GroupBox,
         Label
     }
-
-    public enum ControlType
-    {
-        
-    }
-
-    public enum ElementType
-    {
-        Comment,
-        Control,
-        Table,
-        ContentControl,
-        Bookmark
-    }
 }

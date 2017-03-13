@@ -51,9 +51,6 @@ namespace WordAddInDemoV2.DataContainers
                 ControlItems.Add(ControlItem.GetNewInstance(ElementType.Bookmark, 
                     bookmark.GetType().Name, bookmark.ToString()));
             }
-            
-            //var item = document.CustomXMLParts
-            //AddControl(ElementType.Control);
         }
     }
 

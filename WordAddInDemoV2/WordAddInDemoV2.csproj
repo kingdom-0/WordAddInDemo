@@ -172,12 +172,14 @@
     <Compile Include="DataContainers\BookmarksConatiner.cs" />
     <Compile Include="DataContainers\ControlsContainer.cs" />
     <Compile Include="Helpers\ApplicationHelper.cs" />
+    <Compile Include="Helpers\ControlBase.cs" />
     <Compile Include="Helpers\ControlGenerator.cs" />
     <Compile Include="Helpers\FormHelper.cs" />
     <Compile Include="Helpers\GuidGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Ribbons\ElementType.cs" />
     <Compile Include="Ribbons\WinformControlType.cs" />
     <EmbeddedResource Include="Bookmark\BookmarksForm.resx">
       <DependentUpon>BookmarksForm.cs</DependentUpon>
