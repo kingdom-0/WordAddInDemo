@@ -46,6 +46,7 @@ namespace WordAddInDemoV2.DataContainers
                 ControlItems.Add(ControlItem.GetNewInstance(ElementType.ContentControl,
                     contentControl.GetType().Name, contentControl.Title));
             }
+
             foreach (var bookmark in document.Bookmarks)
             {
                 ControlItems.Add(ControlItem.GetNewInstance(ElementType.Bookmark, 

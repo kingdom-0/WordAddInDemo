@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 using Microsoft.Office.Core;
@@ -16,12 +17,14 @@ namespace WordAddInDemoV2
         private const int TaskPaneWidth = 400;
         private const int ConfirmedDialogCode = -1;
         private bool _needDisplayRecentFile;
+        private MyRibbonTab _myRibbonTab;
 
         internal Microsoft.Office.Tools.CustomTaskPane CurrentTaskPane { get; private set; }
 
         protected override IRibbonExtensibility CreateRibbonExtensibilityObject()
         {
-            return new MyRibbonTab();
+            _myRibbonTab = new MyRibbonTab();
+            return _myRibbonTab;
         }
 
         private void ThisAddIn_Startup(object sender, EventArgs e)
@@ -82,35 +85,46 @@ namespace WordAddInDemoV2
             //AddCustomXmlPartToActiveDocument(Globals.ThisAddIn.Application.ActiveDocument);
         }
 
-        private void OnWindowSelectionChange(Word.Selection sel)
+        private static void OnWindowSelectionChange(Word.Selection sel)
         {
-
             ControlsContainer.Instance.Reset();
         }
 
-        // ReSharper disable once RedundantAssignment
-        private static void OnDocumentBeforeSave(Word.Document doc, ref bool saveAsUi, ref bool cancel)
+
+        [SuppressMessage("ReSharper", "RedundantAssignment")]
+        private void OnDocumentBeforeSave(Word.Document doc, ref bool saveAsUi, ref bool cancel)
         {
-            saveAsUi = false;
-            var dialog = doc.Application.FileDialog[MsoFileDialogType.msoFileDialogSaveAs];
-            dialog.InitialFileName = GuidGenerator.NewGuid();
-            dialog.Title = ConstantControlNames.DialogTitle;
-            var result = dialog.Show();
-            if (result == ConfirmedDialogCode)
+            if (_myRibbonTab.AddInEnabled)
             {
-                var selectedPath = dialog.SelectedItems.Item(1);
-                SaveDocumentWithCustomExtension(doc, selectedPath);
-                SaveDocumentXmlContent(doc, selectedPath);
+                saveAsUi = false;
+                cancel = true;
+                var dialog = doc.Application.FileDialog[MsoFileDialogType.msoFileDialogSaveAs];
+                dialog.InitialFileName = GuidGenerator.NewGuid();
+                dialog.Title = ConstantControlNames.DialogTitle;
+                var result = dialog.Show();
+                if (result == ConfirmedDialogCode)
+                {
+                    var selectedPath = dialog.SelectedItems.Item(1);
+                    SaveDocumentWithCustomExtension(doc, selectedPath);
+                    SaveDocumentXmlContent(doc, selectedPath);
+                }
             }
             else
             {
-                cancel = true;
+                saveAsUi = true;
+                cancel = false;
             }
         }
 
         private static void SaveDocumentWithCustomExtension(Word.Document doc, string selectedPath)
         {
-            doc.SaveAs($"{selectedPath}.{ConstantControlNames.CustomDocumentExtension}");
+            var directory = Path.GetDirectoryName(selectedPath);
+            var filePath = Path.GetFileNameWithoutExtension(selectedPath);
+            if (directory != null)
+            {
+                var newFilePath = Path.Combine(directory, $"{filePath}.{ConstantControlNames.CustomDocumentExtension}");
+                doc.SaveAs(newFilePath);
+            }
         }
 
         private static void SaveDocumentXmlContent(Word._Document doc, string selectedPath)

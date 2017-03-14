@@ -13,7 +13,8 @@ namespace WordAddInDemoV2.Ribbons
     public class MyRibbonTab : Office.IRibbonExtensibility
     {
         private Office.IRibbonUI _ribbon;
-        private bool _addInEnabled;
+
+        public bool AddInEnabled { get; private set; }
 
         #region IRibbonExtensibility Members
 
@@ -33,7 +34,7 @@ namespace WordAddInDemoV2.Ribbons
 
         public void HandleInertBookmarkCommand(Office.IRibbonControl control, ref bool cancelDefault)
         {
-            if (!_addInEnabled)
+            if (!AddInEnabled)
             {
                 cancelDefault = false;
                 return;
@@ -49,7 +50,6 @@ namespace WordAddInDemoV2.Ribbons
             const int large = ConstantControlSize.Large;
             const int middle = ConstantControlSize.Middle;
             const int small = ConstantControlSize.Small;
-
             switch (selectedItemId)
             {
                 case ConstantControlNames.TestButton:
@@ -80,6 +80,8 @@ namespace WordAddInDemoV2.Ribbons
                     return ConstantControlNames.DarkShading;
                 case ConstantControlNames.TaskPaneController:
                     return ConstantControlNames.Bullets;
+                case ConstantControlNames.RemoveControlButton:
+                    return ConstantControlNames.Undo;
             }
 
             return string.Empty;
@@ -105,30 +107,36 @@ namespace WordAddInDemoV2.Ribbons
                 case ConstantControlNames.SaveAsButton:
                     SaveDocument();
                     break;
+                case ConstantControlNames.RemoveControlButton:
+                    RemoveControl();
+                    break;
             }
         }
 
         public bool GetControlEnabled(Office.IRibbonControl control)
         {
-            return _addInEnabled;
+            return AddInEnabled;
+        }
+
+        private static void RemoveControl()
+        {
+            var document = Globals.Factory.GetVstoObject(Globals.ThisAddIn.Application.ActiveDocument);
+            if (document.Controls.Count > 0)
+            {
+                document.Controls.RemoveAt(document.Controls.Count - 1);
+                ControlsContainer.Instance.Reset();
+            }
         }
 
         private static void SaveDocument()
         {
-            try
-            {
-                Globals.ThisAddIn.Application.ActiveDocument.SaveAs();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Save document failed, {ex.Message}.");
-            }
+            Globals.ThisAddIn.Application.ActiveDocument.SaveAs();
         }
 
         private void SetAddInUsability(bool enable)
         {
-            _addInEnabled = enable;
-            if (!_addInEnabled)
+            AddInEnabled = enable;
+            if (!AddInEnabled)
             {
                 SetTaskPaneVisibility(false);
             }

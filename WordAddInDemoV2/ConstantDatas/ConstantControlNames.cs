@@ -8,6 +8,7 @@
         internal const string AddInController = "AddInController";
         internal const string TaskPaneController = "TaskPaneController";
         internal const string SaveAsButton = "SaveAsButton";
+        internal const string RemoveControlButton = "RemoveControlButton";
 
         //WinForm controls' name
         internal const string TestButton = "TestButton";
@@ -24,6 +25,7 @@
         //Mso images
         internal const string DarkShading = "DarkShading";
         internal const string Bullets = "Bullets";
+        internal const string Undo = "Undo";
 
         //TaskPane
         internal const string TaskPaneTitle = "文档元素结构";

@@ -4,7 +4,7 @@ namespace WordAddInDemoV2.Helpers
 {
     internal abstract class ControlBase
     {
-        protected static int Index { get; }
+        protected static int Index { get; set; }
 
         static ControlBase()
         {
@@ -25,7 +25,7 @@ namespace WordAddInDemoV2.Helpers
 
         public override Control GetInstance(int width, int height)
         {
-            return new Button {Text = $@"{ButtonPrefix}-{Index}", Width = width, Height = height};
+            return new Button {Text = $@"{ButtonPrefix}-{Index++}", Width = width, Height = height};
         }
     }
 
@@ -40,7 +40,7 @@ namespace WordAddInDemoV2.Helpers
 
         public override Control GetInstance(int width, int height)
         {
-            return new CheckBox {Text = $@"{CheckBoxPrefix}-{Index}", Width = width, Height = height};
+            return new CheckBox {Text = $@"{CheckBoxPrefix}-{Index++}", Width = width, Height = height};
         }
     }
 
@@ -55,6 +55,7 @@ namespace WordAddInDemoV2.Helpers
 
         public override Control GetInstance(int width, int height)
         {
+            Index++;
             return new DateTimePicker() {Width = width, Height = height};
         }
     }
@@ -70,7 +71,7 @@ namespace WordAddInDemoV2.Helpers
 
         public override Control GetInstance(int width, int height)
         {
-            return new GroupBox {Text = $@"{GroupBoxPrefix}-{Index}", Width = width, Height = height};
+            return new GroupBox {Text = $@"{GroupBoxPrefix}-{Index++}", Width = width, Height = height};
         }
     }
 
@@ -85,7 +86,7 @@ namespace WordAddInDemoV2.Helpers
 
         public override Control GetInstance(int width, int height)
         {
-            return new Label {Text = $@"{LabelPrefix}-{Index}", Width = width, Height = height};
+            return new Label {Text = $@"{LabelPrefix}-{Index++}", Width = width, Height = height};
         }
     }
 }

@@ -25,6 +25,11 @@
             <item id="TestGroupBox" 
                   label="GroupBox"/>
           </dropDown>
+          <button id="RemoveControlButton" 
+                  label="删除控件"
+                  onAction="OnButtonClick"
+                  getEnabled="GetControlEnabled"
+                  getImage="GetImage"/>
         </group>
         <group id="SettingGroup"
                label="设置">
