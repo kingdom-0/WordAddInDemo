@@ -122,7 +122,8 @@ namespace WordAddInDemoV2
             var filePath = Path.GetFileNameWithoutExtension(selectedPath);
             if (directory != null)
             {
-                var newFilePath = Path.Combine(directory, $"{filePath}.{ConstantControlNames.CustomDocumentExtension}");
+                var newFilePath = Path.Combine(directory, 
+                    $"{filePath}.{ConstantControlNames.CustomDocumentExtension}");
                 doc.SaveAs(newFilePath);
             }
         }
